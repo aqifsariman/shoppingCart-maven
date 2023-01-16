@@ -2,7 +2,9 @@ package sg.edu.nus.iss;
 
 import java.io.Console;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -51,30 +53,40 @@ public final class App {
             }
 
             if (input.startsWith("add")) {
-                addCartItem(cartItems, input);
+                addCartItem(cartItems, input, dirPath, filename);
             }
             if (input.startsWith("delete")) {
                 deleteCartItem(cartItems, input);
             }
 
             if (input.startsWith("login")) {
-                login(input, filename, dirPath);
+                filename = login(input, filename, dirPath);
             }
         }
     }
 
-    public static void addCartItem(List<String> cartItems, String input) {
+    public static void addCartItem(List<String> cartItems, String input, String dirPath, String filename)
+            throws IOException {
         input = input.replace(",", " ");
         Scanner scan = new Scanner(input.substring(4));
         String strValue = "";
+
+        FileWriter fw = new FileWriter(dirPath + File.separator + filename);
+        PrintWriter pw = new PrintWriter(fw);
 
         while (scan.hasNext()) {
             strValue = scan.next();
             if (!cartItems.contains(strValue)) {
                 cartItems.add(strValue);
+                pw.printf("%s\n", strValue);
                 System.out.printf("%s added to cart.\n", strValue);
             }
         }
+        pw.flush();
+        fw.flush();
+        pw.close();
+        fw.close();
+
     }
 
     public static void listCart(List<String> cartItems) {
@@ -94,7 +106,7 @@ public final class App {
         cartItems.remove(indexValue);
     }
 
-    public static void login(String input, String filename, String dirPath) throws IOException {
+    public static String login(String input, String filename, String dirPath) throws IOException {
         input = input.replace(",", " ");
         // SCAN THE NAME AFTER LOGIN IS TYPED
         Scanner scan = new Scanner(input.substring(6));
@@ -114,6 +126,7 @@ public final class App {
         } else {
             System.out.println("File already created.");
         }
+        return filename;
     }
 
     public static void listUsers(String dirPath) {
