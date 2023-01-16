@@ -15,7 +15,7 @@ public final class App {
         String strValue = "";
         String filename = "";
         String dirPath = "c:\\Users\\aqifs\\ibf\\day3_workshop\\data";
-
+        // INSTANTIATE FILE DIRECTORY
         File newDirectory = new File(dirPath);
 
         if (!newDirectory.exists()) {
@@ -25,10 +25,9 @@ public final class App {
         }
         System.out.println("Welcome to my shopping cart.");
 
+        // CREATE LIST FOR CART ITEMS
         List<String> cartItems = new ArrayList<>();
-
         Console cons = System.console();
-
         String input = "";
 
         while (!input.equals("quit")) {
@@ -46,47 +45,34 @@ public final class App {
                     listCart(cartItems);
                     break;
                 case "users":
+                    listUsers(dirPath);
                     break;
                 default:
             }
 
             if (input.startsWith("add")) {
-                input = input.replace(",", " ");
-                Scanner scan = new Scanner(input.substring(4));
-                strValue = "";
-
-                while (scan.hasNext()) {
-                    strValue = scan.next();
-                    if (!cartItems.contains(strValue)) {
-                        cartItems.add(strValue);
-                        System.out.printf("%s added to cart.\n", strValue);
-                    }
-                }
-
+                addCartItem(cartItems, input);
             }
             if (input.startsWith("delete")) {
                 deleteCartItem(cartItems, input);
             }
 
             if (input.startsWith("login")) {
-                input = input.replace(",", " ");
+                login(input, filename, dirPath);
+            }
+        }
+    }
 
-                String strLogin = "";
-                Scanner scan = new Scanner(input.substring(6));
+    public static void addCartItem(List<String> cartItems, String input) {
+        input = input.replace(",", " ");
+        Scanner scan = new Scanner(input.substring(4));
+        String strValue = "";
 
-                while (scan.hasNext()) {
-                    filename = scan.next();
-                }
-
-                File loginFile = new File(dirPath + File.separator + filename + ".txt");
-                boolean isCreated = loginFile.createNewFile();
-
-                if (isCreated) {
-                    System.out.printf("New file (%s) successfully created.", loginFile.getCanonicalFile());
-                } else {
-                    System.out.println("File already created.");
-                }
-
+        while (scan.hasNext()) {
+            strValue = scan.next();
+            if (!cartItems.contains(strValue)) {
+                cartItems.add(strValue);
+                System.out.printf("%s added to cart.\n", strValue);
             }
         }
     }
@@ -106,5 +92,36 @@ public final class App {
         String strValue = input.substring(7);
         int indexValue = Integer.parseInt(strValue) - 1;
         cartItems.remove(indexValue);
+    }
+
+    public static void login(String input, String filename, String dirPath) throws IOException {
+        input = input.replace(",", " ");
+        // SCAN THE NAME AFTER LOGIN IS TYPED
+        Scanner scan = new Scanner(input.substring(6));
+
+        // SCAN AND DECLARE FILE NAME
+        while (scan.hasNext()) {
+            filename = scan.next();
+        }
+
+        // CREATE LOGIN FILE
+        File loginFile = new File(dirPath + File.separator + filename + ".txt");
+        // CREATENEWFILE WILL RETURN BOOLEAN.
+        boolean isCreated = loginFile.createNewFile();
+
+        if (isCreated) {
+            System.out.printf("New file (%s) successfully created.", loginFile.getCanonicalFile());
+        } else {
+            System.out.println("File already created.");
+        }
+    }
+
+    public static void listUsers(String dirPath) {
+        File directoryPath = new File(dirPath);
+        String[] contents = directoryPath.list();
+
+        for (String content : contents) {
+            System.out.println(content.replace(".txt", ""));
+        }
     }
 }
